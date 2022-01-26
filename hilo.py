@@ -1,125 +1,82 @@
 import random
 
 class Cards:
-    """A small cube with a different number of spots on each of its six sides.
-
-    The responsibility of Die is to keep track of the side facing up and calculate the points for 
-    it.
-   
-    Attributes:
-        value (int): The number of spots on the side facing up.
-    """
-
     def __init__(self):
-        """Constructs a new instance of Die.
-
-        Args:
-            self (Die): An instance of Die.
-        """
+        self.first_turn = True
         self.current_card = 0
         self.next_card = 0
         self.points = 0
 
     def draw(self):
-        """Generates a new random value and calculates the points for the die.
-        
-        Args:
-            self (Die): An instance of Die.
-        """
-        self.current_card = random.randint(1, 13)
-        print(f"The card is: {self.current_card}")
-        # self.points = 50 if self.current_card == "" else 100 if self.current_card == 1 else 0
+        if self.first_turn == True:
+            self.current_card = random.randint(1, 13)
+            print(f"The card is: {self.current_card}")
+        else: print(f"The card is: {self.current_card}")
+
+        return self.current_card
     
-    # def next_draw(self):
-    #     self.next_card = random.randint(1, 13)
-    #     print(f"Next card was: {self.next_card}")
+    def next_draw(self):
+        self.next_card = random.randint(1, 13)
+        print(f"Next card was: {self.next_card}")
+        self.first_turn = False
+        return self.next_card
+
+    def looping_draws(self):
+        self.next_card = self.current_card
 
 
 
 class Director:
-    """A person who directs the game. 
-    
-    The responsibility of a Director is to control the sequence of play.
-
-    Attributes:
-        dice (List[Die]): A list of Die instances.
-        is_playing (boolean): Whether or not the game is being played.
-        score (int): The score for one round of play.
-        total_score (int): The score for the entire game.
-    """
-
     def __init__(self):
-        """Constructs a new Director.
-        
-        Args:
-            self (Director): an instance of Director.
-        """
         self.card = []
         self.is_playing = True
-        self.score = 300
+        self.score = 0
         self.total_score = 0
 
-        # for i in range(13):
-        #     card = Cards()
-        #     self.card.append(Cards)
-
     def start_game(self):
-        """Starts the game by running the main game loop.
-        
-        Args:
-            self (Director): an instance of Director.
-        """
         while self.is_playing:
             cards = Cards()
             cards.draw()
             self.get_inputs()
+            cards.next_draw()
             self.do_updates()
+            cards.looping_draws()
             self.do_outputs()
 
     def get_inputs(self):
-        """Ask the user if they want to roll.
+        self.guess_card = input("Guess card? Higher or Lower [h/l] ")
+        if self.guess_card != "h" or "l":
+            print("Invalid input. Please try again.")
+            quit()
 
-        Args:
-            self (Director): An instance of Director.
-        """
-        guess_card = input("Guess card? Higher or Lower [h/l] ")
-        if guess_card == "h":
-            self.is_playing = (guess_card == "h")
-        elif guess_card == "l":
-            self.is_playing = (guess_card == "l")
-
-    # def determiner(self.current_card, self.next_card, guess_card):
-    #     if self.next_card > self.current_card
-
-       
     def do_updates(self):
-        """Updates the player's score.
-
-        Args:
-            self (Director): An instance of Director.
-        """
-        if not self.is_playing:
-            return 
-
-        for i in range(len(self.card)):
-            cards = self.card[i]
-            cards.draw()
-            self.score += cards.points 
-        self.total_score += self.score
+        cards = Cards()
+        current_card = cards.current_card
+        next_card = cards.next_card
+        if self.guess_card == "h" and current_card > next_card:
+            self.total_score += 100
+        elif self.guess_card == "h" and current_card < next_card:
+            self.total_score -= 75
+        elif self.guess_card == "l" and current_card > next_card:
+            self.total_score -= 75
+        elif self.guess_card == "l" and current_card < next_card:
+            self.total_score += 100
+        else: 
+            print("An error has occured. Please try again.")
+            quit()
 
     def do_outputs(self):
-        """Displays the dice and the score. Also asks the player if they want to roll again. 
-
-        Args:
-            self (Director): An instance of Director.
-        """
-        if not self.is_playing:
-            return
-        
-        
         print(f"Your score is: {self.total_score}\n")
-        self.is_playing == (self.score > 0)
+        cont_play = input("Play again? [y/n]")
 
+        if cont_play == "y":
+            self.is_playing = True
+        elif cont_play == "n":
+            print("Goodbye.")
+            self.is_playing = False
+        else: 
+            print("Invalid input. Please try again.")
+            quit()
 
 director = Director()
 director.start_game()
