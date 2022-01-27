@@ -16,18 +16,24 @@ class Cards:
         Args:
             self (Die): An instance of Die.
         """
-        self.current_card = 0
-        self.next_card = 0
-        self.points = 0
+        # self.current_card = 0
+        # self.next_card = 0
+        # self.points = 100
 
-    def draw(self):
+    def draw(self,decide):
         """Generates a new random value and calculates the points for the die.
         
         Args:
             self (Die): An instance of Die.
         """
-        self.current_card = random.randint(1, 13)
-        print(f"The card is: {self.current_card}")
+        if decide == "1":
+            self.current_card = random.randint(1, 13)
+            print(f"The card is: {self.current_card}")
+            return self.current_card
+        elif decide == "2":
+            self.next_card = random.randint(1, 13)
+            print(f"The next card was: {self.next_card}")
+            return self.next_card            
         # self.points = 50 if self.current_card == "" else 100 if self.current_card == 1 else 0
     
     # def next_draw(self):
@@ -54,9 +60,9 @@ class Director:
         Args:
             self (Director): an instance of Director.
         """
-        self.card = []
         self.is_playing = True
-        self.score = 300
+        self.beginnerscore = 300
+        self.points = 100
         self.total_score = 0
 
         # for i in range(13):
@@ -69,12 +75,16 @@ class Director:
         Args:
             self (Director): an instance of Director.
         """
+        counter = 1
         while self.is_playing:
-            cards = Cards()
-            cards.draw()
-            self.get_inputs()
-            self.do_updates()
+            current_card = Cards().draw(decide="1")
+            guess = self.get_inputs()
+            next_card = Cards().draw(decide="2")
+
+            # print(f"{current_card} -> {next_card}")
+            self.do_updates(current_card,next_card,guess,counter)
             self.do_outputs()
+            counter += 1
 
     def get_inputs(self):
         """Ask the user if they want to roll.
@@ -84,28 +94,45 @@ class Director:
         """
         guess_card = input("Guess card? Higher or Lower [h/l] ")
         if guess_card == "h":
-            self.is_playing = (guess_card == "h")
+            # self.is_playing = (guess_card == "h")
+            return guess_card
         elif guess_card == "l":
-            self.is_playing = (guess_card == "l")
+            return guess_card
+            # self.is_playing = (guess_card == "l")
+        else:
+            print("Invalid Input")
 
     # def determiner(self.current_card, self.next_card, guess_card):
     #     if self.next_card > self.current_card
 
        
-    def do_updates(self):
+    def do_updates(self,current_card,next_card,guess,counter):
         """Updates the player's score.
 
         Args:
             self (Director): An instance of Director.
         """
-        if not self.is_playing:
-            return 
+        # if not self.is_playing:
+        #     return 
+        if counter == 1:
+            if current_card > next_card and guess == "l" or current_card < next_card and guess == "h":
+                self.total_score = self.points + self.beginnerscore
+            else:
+                self.total_score = self.beginnerscore - self.points
+        else:
+            if current_card > next_card and guess == "l" or current_card < next_card and guess == "h":
+                self.total_score += self.points
+            else:
+                self.total_score = self.total_score - self.points
+         
+        # elif :
+        #     self.score += self.points
 
-        for i in range(len(self.card)):
-            cards = self.card[i]
-            cards.draw()
-            self.score += cards.points 
-        self.total_score += self.score
+        # for i in range(len(self.card)):
+        #     cards = self.card[i]
+        #     cards.draw()
+        #     self.score += cards.points 
+        # self.total_score += self.total_score
 
     def do_outputs(self):
         """Displays the dice and the score. Also asks the player if they want to roll again. 
@@ -116,9 +143,8 @@ class Director:
         if not self.is_playing:
             return
         
-        
         print(f"Your score is: {self.total_score}\n")
-        self.is_playing == (self.score > 0)
+        self.is_playing == (self.total_score > 0)
 
 
 director = Director()
