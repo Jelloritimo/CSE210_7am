@@ -1,6 +1,5 @@
 import random
 
-
 from game.cards import Cards
 
 class Director:
@@ -45,7 +44,7 @@ class Director:
             self.do_updates(current_card,next_card,guess,counter)
             self.do_outputs()
             "play again method to do y/n"
-           
+            self.play_again()
 
             counter += 1
 
@@ -65,9 +64,6 @@ class Director:
                 # self.is_playing = (guess_card == "l")
             else:
                 print("Invalid Input")
-
-    # def determiner(self.current_card, self.next_card, guess_card):
-    #     if self.next_card > self.current_card
 
        
     def do_updates(self,current_card,next_card,guess,counter):
@@ -89,9 +85,9 @@ class Director:
             else:
                 self.total_score = self.total_score - 75
         
-        if self.total_score== 0: 
+        if self.total_score <= 0: 
                 print ("Game Over. You are out of points")
-                self.is_playing == False
+                self.is_playing = False
 
     def do_outputs(self):
         """Displays the total score. Also asks the player if they want to roll again. 
@@ -108,8 +104,14 @@ class Director:
 
     def play_again (self):
         "This method asks the user if they want to play again or not"
-        play_again = input("Do you want to play again? [y/n] ")
-        self.is_playing = (play_again == "y")
-        if not self.is_playing:
+
+        # Input validation
+        play_again = "J"
+        while play_again not in ("y","n"):
+            play_again = input("Do you want to play again? [y/n] ")
+        # self.is_playing = (play_again == "y")
+        
+        if play_again== "n":
             print ("Game over")
-            return 
+            self.is_playing = False
+    
